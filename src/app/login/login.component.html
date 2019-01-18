@@ -1,0 +1,10 @@
+<div *ngIf="!userService.loggedUser; else logged">
+  <h1>
+    Log in!
+  </h1>
+  <app-form [submit]="login" buttonMsg="Sign Up"></app-form>
+</div>
+<ng-template #logged>
+  <h1>Jesteś zalogowany :)</h1>
+  <p>Przejdź do <a routerLink="game">gry</a></p>
+</ng-template>

@@ -1,0 +1,15 @@
+.card-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+ul {
+    list-style: none;
+    display: inline-flex;
+}
+
+ul li {
+    padding: 5px;
+}
