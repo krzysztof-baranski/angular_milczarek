@@ -11,6 +11,17 @@ export class UsernameValidators {
         return null;
     }
 
+    static shouldBeEqual (control: AbstractControl) : ValidationErrors | null {
+        console.log('Valida', control.root.get('confirmPassword'));
+        if(control.root.get('confirmPassword').value !== control.root.get('password').value) {
+            return {
+                shouldBeEqual: true
+            };
+        }
+
+        return null;
+    }
+
     // async validator
     // static shouldBeUnique(control: AbstractControl) : Promise<ValidationErrors | null> {
     //     return new Promise((resolve, reject) => {

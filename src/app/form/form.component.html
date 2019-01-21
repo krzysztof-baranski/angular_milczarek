@@ -16,6 +16,18 @@
   <div class="form-group">
     <label for="password">Password</label>
     <input id="password" formControlName="password" type="password" class="form-control">
+    <div *ngIf="password.touched && password.invalid">
+      <div *ngIf="password.errors.required" class="alert alert-danger">Password is required.</div>
+    </div>
+    <div *ngIf="router.url === '/register'">
+      <label style="margin-top: 1rem;" for="confirmPassword">Confirm password</label>
+      <input id="confirmPassword" formControlName="confirmPassword" type="password" class="form-control">
+      <div *ngIf="confirmPassword.touched && confirmPassword.invalid">
+        <div *ngIf="confirmPassword.errors.required" class="alert alert-danger">Confirm password.</div>
+      </div>
+      <div *ngIf="confirmPassword.errors?.shouldBeEqual" class="alert alert-danger">Passwords are different.</div>
+    </div>
   </div>
   <button [disabled]="form.invalid" class="btn btn-primary" type="submit">{{ buttonMsg }}</button>
+  <button [disabled]="form.pristine" style="margin-left: 20px;" class="btn btn-danger" type="button" (click)="resetForm()">Wyczyść</button>
 </form>

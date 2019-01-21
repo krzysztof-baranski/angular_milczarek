@@ -12,7 +12,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { GameComponent } from './game/game.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { AuthGuard } from './auth/auth.guard';
+import { AuthGuard, RegisterGuard } from './auth/auth.guard';
 
 const appRoutes: Routes = [
   {
@@ -26,7 +26,8 @@ const appRoutes: Routes = [
   },
   {
     path: 'register',
-    component: RegisterComponent
+    component: RegisterComponent,
+    canActivate: [RegisterGuard]
   },
   {
     path: 'login',

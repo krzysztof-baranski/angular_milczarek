@@ -15,3 +15,17 @@ export class AuthGuard implements CanActivate {
     return !!this.userService.loggedUser;
   }
 }
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RegisterGuard implements CanActivate {
+  constructor (private userService: UserService) {}
+
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+      console.log('Register', next, state);
+      return !this.userService.loggedUser;
+  }
+}
