@@ -11,8 +11,36 @@
     margin: 3rem;
 }
 
+@keyframes twist-off {
+    from {
+        transform: rotate(90deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
 .list-container button {
     margin-left: 10px;
+    animation-name: twist-off;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes twist {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(90deg);
+    }
+}
+
+.list-container button:hover {
+    animation-name: twist;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-direction: reverse;
 }
 
 .list-group-item {
