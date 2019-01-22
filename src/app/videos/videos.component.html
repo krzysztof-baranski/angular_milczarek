@@ -1,0 +1,18 @@
+<span class="videos-container">
+
+  <video #video width="600" height="480" controls autoplay id="videoSrc">
+    <source [src]="videoSrc" type="video/mp4">
+  </video>
+  <div class="list-container">
+    <h3 style="margin-bottom: 2rem;">Movie list:</h3>
+    <ul class="list-group">
+      <li [ngClass]="{ 'active': i === activeVideo }" (click)="playVideo(i)" class="list-group-item" 
+      *ngFor="let v of videos; let i = index" @items>
+        <span>
+          {{ v }}
+        </span>
+        <button role="button" class="btn btn-danger" (click)="deleteVideo($event, i)">X</button>
+      </li>
+    </ul>
+  </div>
+</span>
