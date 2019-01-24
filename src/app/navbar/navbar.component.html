@@ -2,17 +2,17 @@
   <!-- <a href="#" class="navbar-brand">Home</a> -->
   <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
+      <li [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="nav-item active">
         <a routerLink="/" class="nav-link">Home</a>
       </li>
-      <li class="nav-item">
-        <a routerLink="game" class="nav-link">Game</a>
+      <li routerLinkActive="nav-item active">
+        <a routerLink="/game" [class.disabled]="!userService.loggedUser" class="nav-link">Game</a>
       </li>
-      <li class="nav-item">
-        <a routerLink="videos" class="nav-link">Videos</a>
+      <li routerLinkActive="nav-item active">
+        <a routerLink="/videos" class="nav-link">Videos</a>
       </li>
-      <li class="nav-item">
-        <a routerLink="about" class="nav-link">About</a>
+      <li routerLinkActive="nav-item active">
+        <a routerLink="/about" class="nav-link">About</a>
       </li>
     </ul>
     <ul class="nav justify-content-end">
@@ -20,7 +20,7 @@
         <a class="nav-link" routerLink="register">Register</a>
       </li>
       <li *ngIf="userService.loggedUser" class="nav-item">
-        <a class="nav-link active" routerLink="" (click)="logout()">Logout</a>
+        <a class="nav-link" routerLink="" (click)="logout()">Logout</a>
       </li>
     </ul>
   </div>

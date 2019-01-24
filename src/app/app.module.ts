@@ -18,6 +18,11 @@ import { VideosComponent } from './videos/videos.component';
 
 const appRoutes: Routes = [
   {
+    path: '',
+    component: LoginComponent,
+    // pathMatch: 'full'
+  },
+  {
     path: 'about',
     component: AboutComponent
   },
@@ -40,13 +45,9 @@ const appRoutes: Routes = [
     component: LoginComponent
   },
   {
-    path: '',
-    component: LoginComponent
-  },
-  {
     path: 'home',
-    redirectTo: '/',
-    pathMatch: 'full'
+    redirectTo: '',
+    // pathMatch: 'full'
   },
   {
     path: '**',
