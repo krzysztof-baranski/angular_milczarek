@@ -22,9 +22,9 @@ export class GameComponent implements OnInit {
     blocksGenerated = false;
     ballInterval;
     actualScore = 0;
-    rows = 2;
-    cols = 10;
     oponentBall;
+    intervals = [];
+    isGameOver: boolean;
 
     constructor() { }
 
@@ -40,7 +40,7 @@ export class GameComponent implements OnInit {
         // draw font in red
         this.context.fillStyle = "red";
         this.context.font = "20pt sans-serif";
-        this.context.fillText("Play!", this.canvas.width / 2, this.canvas.height / 2);
+        this.context.fillText("Play!", this.canvas.width / 2 - 30, this.canvas.height / 2);
         this.canvas.addEventListener('click', this.startGame);
         this.canvas.addEventListener('keydown', (e) => this.keyDown(e));
 
@@ -66,11 +66,15 @@ export class GameComponent implements OnInit {
             width: 50,
             height: 30
         };
+        let rows = 5;
+        let cols = 10;
 
         const margin = 10;
 
-        for (let i = 0; i < this.cols; i ++) {
-            for (let j = 0; j < this.rows; j++) {
+        this.blocks = [];
+
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
                 this.blocks.push({ ...block });
                 block.y = block.y + margin + block.height;
             }
@@ -79,7 +83,7 @@ export class GameComponent implements OnInit {
 
         }
 
-        this.drawBlocks(); 
+        this.drawBlocks();
         this.blocksGenerated = true;
         console.log(this.blocks);
     }
@@ -107,9 +111,12 @@ export class GameComponent implements OnInit {
         for (let b of this.blocks) {
             if ((this.ball.x > b.x && this.ball.x < (b.x + b.width)) &&
                 (this.ball.y < b.y + b.height && this.ball.y > b.y)) {
-                console.log('Cl', index);
                 this.blocks.splice(index, 1);
                 this.actualScore++;
+                console.log('Cl', index, this.blocks.length);
+                if (!this.blocks.length) {
+                    this.gameOver(true);
+                }
                 return index;
             }
             index++;
@@ -117,34 +124,71 @@ export class GameComponent implements OnInit {
         return -1;
     }
 
-    oponentFireStart () {
-        // let fireInterval = setInterval(() => {
-            let blockIndex = Math.floor(Math.random() * this.cols * this.rows);
+    oponentFireStart() {
+        this.intervals.push(setInterval(() => {
+            let blockIndex = Math.floor(Math.random() * this.blocks.length);
             let block = this.blocks[blockIndex];
+
+            if (!block) {
+                return;
+            }
+
+            this.oponentBall = {
+                x: block.x + (block.width / 2),
+                y: block.y + (block.height / 2)
+            };
+
             this.drawBall(block);
-            this.drawOponentBallMovement();
+            this.drawOponentBallMovement(block);
 
             // console.log(blockIndex, ' ', block);
-        // }, 2000);
+        }, 1000));
     }
 
-    drawOponentBallMovement () {
+    drawOponentBallMovement(oponent) {
         let interval = setInterval(() => {
             this.clear();
             this.draw();
-            this.drawBall(null);
+            this.drawBall(oponent);
             this.oponentBall.y += 5;
-            // let dead = this.checkIfDead();
-            this.checkContact();
-            if (this.oponentBall.y > 800) {
+
+            if (this.oponentBall.y > 600) {
                 clearInterval(interval);
             }
-            console.log(this.oponentBall.y);
+            if (this.oponentBall.y > this.ship.y && this.checkContact()) {
+                this.gameOver(false);
+                clearInterval(interval);
+            }
+            // console.log(this.oponentBall.y, this.ship.y);
         }, 10);
+        this.intervals.push(interval);
     }
 
-    checkContact () {
-        // sprawdzic czy dotknal shipa
+    checkContact() {
+        if ((this.oponentBall.x < this.ship.x || this.oponentBall.x > this.ship.x + this.ship.width)
+            && (this.oponentBall.y > this.ship.y)) {
+            console.log('NOT DEAD!!!');
+            return false;
+        } else {
+            console.log('DEAD!!!');
+            return true;
+        }
+    }
+
+    gameOver(isWinner: boolean) {
+        this.clear();
+        this.context.fillStyle = "red";
+        this.context.font = "20pt sans-serif";
+        if (isWinner) {
+            this.context.fillText("Winner!", this.canvas.width / 2 - 40, this.canvas.height / 2);
+        } else {
+            this.context.fillText("Game Over!", this.canvas.width / 2 - 50, this.canvas.height / 2);
+        }
+
+        for (let i of this.intervals) {
+            clearInterval(i);
+        }
+        this.isGameOver = true;
     }
 
     fire() {
@@ -157,12 +201,13 @@ export class GameComponent implements OnInit {
             this.clear();
             this.draw();
             // this.drawBall(null);
-            this.oponentBall.y += 5;
+            this.ball.y -= 5;
             let dead = this.checkIfDead();
-            if (dead > -1 || this.checkBallOutsideBox()) {
+            if ((dead > -1 || this.checkBallOutsideBox()) && !this.isGameOver) {
                 this.setBall();
             }
         }, 1);
+        this.intervals.push(this.ballInterval);
     }
 
     checkBallOutsideBox() {
@@ -184,10 +229,7 @@ export class GameComponent implements OnInit {
         this.context.fillStyle = "orange";
         this.context.beginPath();
         if (oponent) {
-            this.oponentBall = { 
-                x: oponent.x + (oponent.width / 2), 
-                y: oponent.y + (oponent.height / 2) 
-            };
+            // console.log(this.oponentBall);
             this.context.arc(this.oponentBall.x, this.oponentBall.y, this.ball.r, 0, 2 * Math.PI);
         } else {
             this.context.arc(this.ball.x, this.ball.y, this.ball.r, 0, 2 * Math.PI);
@@ -196,13 +238,20 @@ export class GameComponent implements OnInit {
         this.context.closePath();
     }
 
-    drawScore (score) {
+    drawScore(score) {
         this.context.fillStyle = "black";
         this.context.font = "40pt sans-serif";
         this.context.fillText(score, 700, 70);
     }
 
     keyDown = (e) => {
+        if (this.isGameOver) {
+            this.isGameOver = false;
+            this.blocksGenerated = false;
+            this.startGame();
+            
+            return;
+        }
         console.log(e.keyCode);
         if (e.keyCode === 32) {
             this.fire();
@@ -237,7 +286,7 @@ export class GameComponent implements OnInit {
             this.generateBlocks();
         }
         this.drawBlocks();
-        this.drawBall();
+        this.drawBall(null);
         this.drawScore(this.actualScore);
     }
 
